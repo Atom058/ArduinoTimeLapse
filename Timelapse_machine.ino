@@ -53,6 +53,7 @@ void setup() {
 
 unsigned long loopTime = 0;
 bool timelapseRunning = false;
+bool initialContrastSet = false;
 
 void loop() {
 
