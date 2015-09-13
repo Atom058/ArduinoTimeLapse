@@ -1,40 +1,43 @@
 #include <Stepper.h>
 #include <LiquidCrystal.h>
 
-// Settings for Motor
-const int stepsPerRevolution = 64;    // For the engine
-const int oneRevolution = stepsPerRevolution * 32; //Approximate with gearing
-const float stepResolution = (float) 360 / oneRevolution; //Good for finding out positioning
-const int oneDegree = oneRevolution / 360; //Not REALLY one degree, but anyway.
-const int motorSpeed = 10; //RPM of the motor, gives 10/64 RPM out (0,15RPM)
 
-//Pins for crystal
-const int rs = 2;
-const int enable = 3;
-const int d4 = 4;
-const int d5 = 5;
-const int d6 = 6;
-const int d7 = 7;
+//Pins
+    //Pins for crystal
+    const int rs = 2;
+    const int enable = 3;
+    const int d4 = 4;
+    const int d5 = 5;
+    const int d6 = 6;
+    const int d7 = 7;
 
-//Pins for motor
-const int motorPin1 = 8;
-const int motorPin2 = 9;
-const int motorPin3 = 12;
-const int motorPin4 = 13;
+    //Pins for motor
+    const int motorPin1 = 8;
+    const int motorPin2 = 9;
+    const int motorPin3 = 12;
+    const int motorPin4 = 13;
 
-// Pins that aren't connected to the library, but are still related to LCD
-const int contrastPin = 11;
+    // Pins that aren't connected to the library, but are still related to LCD
+    const int contrastPin = 11;
 
-//Other Pins
-const int buttonUp = A1;
-const int buttonDown = A2;
-const int buttonMenu = A3;
-//Reset button - should be connected to a pnp to LCD/Motor and to Arduino
+    //Other Pins
+    const int buttonUp = A1;
+    const int buttonDown = A2;
+    const int buttonMenu = A3;
+    //Reset button - should be connected to a pnp to LCD/Motor and to Arduino
 
-// The stepper motor is geared, so it has 64 internal steps per
-//     revolution, but that translates 64x32 steps on the engine.
-Stepper myStepper(stepsPerRevolution, motorPin1, motorPin2, motorPin3, motorPin4);
+//Motor
+    // The stepper motor is geared, so it has 64 internal translated to 64x32 steps out.
+    Stepper myStepper(stepsPerRevolution, motorPin1, motorPin2, motorPin3, motorPin4);
 
+    // Settings for Motor
+    const int stepsPerRevolution = 64;    // For the engine
+    const int oneRevolution = stepsPerRevolution * 32; //Approximate with gearing
+    const float stepResolution = (float) 360 / oneRevolution; //Good for finding out positioning
+    const int oneDegree = oneRevolution / 360; //Not REALLY one degree, but anyway.
+    const int motorSpeed = 10; //RPM of the motor, gives 10/64 RPM out (0,15RPM)
+
+//LCD
 LiquidCrystal lcd(rs, enable, d4, d5, d6, d7);
 
 //Variables
@@ -51,42 +54,44 @@ void setup() {
 }
 
 //Temporary placement of variables
-unsigned long loopTime = 0;
-unsigned long lastPressTime = 0;
-int debounceTime = 200;
+    unsigned long loopTime = 0;
+    unsigned long lastPressTime = 0;
+    int debounceTime = 200;
 
-//Values for settings
-int contrast = 200; //TODO Calibrate initial value
-int angle = 0;
-int time = 0;
+    //Values for settings
+    int contrast = 200; //TODO Calibrate initial value
+    int angle = 0;
+    int time = 0;
 
-float currentMotorPosition = 0;
+    float currentMotorPosition = 0;
 
-bool timelapseRunning = false;
-bool initialContrastSet = false;
+    bool timelapseRunning = false;
+    bool initialContrastSet = false;
 
 //State recording
-const int menuScreen = 1; //ONLY for currentScreen
-const int angleScreen = 2; 
-const int timeScreen = 3;
-const int contrastScreen = 4;
-const int startItem = 5; //ONLY for currentSelection
-const int timelapseScreen = 6; //Not included as of yet
 
-int currentScreen = 1; //initiate on menu screen
-int currentSelection = 0;
+    //Screens
+    const int menuScreen = 1; //ONLY for currentScreen
+    const int angleScreen = 2; 
+    const int timeScreen = 3;
+    const int contrastScreen = 4;
+    const int startItem = 5; //ONLY for currentSelection
+    const int timelapseScreen = 6; //Not included as of yet
 
-const int up = 1;
-const int down = 2;
-const int menu = 3;
+    int currentScreen = 1; //initiate on menu screen
+    int currentSelection = 0;
 
-int previousButton = 0;
-bool buttonRepeated = false;
+    //Buttons
+    const int up = 1;
+    const int down = 2;
+    const int menu = 3;
 
-//Button states
-bool buttonUpOn = false;
-bool buttonDownOn = false;
-bool buttonMenuOn = false;
+    int previousButton = 0;
+    bool buttonRepeated = false;
+
+    bool buttonUpOn = false;
+    bool buttonDownOn = false;
+    bool buttonMenuOn = false;
 
 void loop() {
     
@@ -104,34 +109,25 @@ void loop() {
 
     } else if( !timelapseRunning ) {
 
-        //C's switch/case are too weak!
+        //These weird if cases are nescessary because of switch/case implementation
         if( currentScreen == menuScreen ){
             menuScreenLogic();
-        }
-        if( currentScreen == timeScreen ){
+        } else if( currentScreen == timeScreen ){
             timeScreenLogic();
-        }
-        if( currentScreen == contrastScreen ){
+        } else if( currentScreen == contrastScreen ){
             contrastScreenLogic();
-        }
-        if( currentScreen == angleScreen ){
+        } else if( currentScreen == angleScreen ){
             angleScreenLogic();
+        } else {
+            currentScreen = menuScreen;
         }
 
     } else {
-        //Timelapse logic
+        lcd.clear();
+        lcd.setCursor( 0, 0 );
+        lcd.noCursor();
+        lcd.print("Engine on");
     }
-    
-    /*
-    lcd.setCursor(0, 0);
-    lcd.print("Total degrees:");
-    lcd.setCursor(0,1);
-    output = String(currentMotorPosition);
-    lcd.print(output);
-    myStepper.step(oneDegree);
-    delay(500);
-    currentMotorPosition += oneDegree * stepResolution;
-    */
     
 }
 
@@ -142,6 +138,7 @@ void loop() {
          it is beneficial to share the button state over the entire loop.
 */
 void readButtons() {
+
     if( lastPressTime + debounceTime < loopTime ) {
         //There must be some time between presses to avoid button bounce
 
@@ -150,34 +147,49 @@ void readButtons() {
         buttonMenuOn = false;
 
         if( digitalRead(buttonUp) == HIGH ){
+
             buttonUpOn = true;
+
             if( previousButton == up ){
                 buttonRepeated = true;
             }
+
             previousButton = up;
             lastPressTime = loopTime;
+
         } else if( digitalRead(buttonDown) == HIGH ){
+
             buttonDownOn = true;
+
             if( previousButton == down ){
                 buttonRepeated = true;
             }
+
             previousButton = down;
             lastPressTime = loopTime;
+
         } else if( digitalRead(buttonMenu) == HIGH ){
+
             buttonMenuOn = true;
+
             if( previousButton == menu ){
                 buttonRepeated = true;
             }
+
             previousButton = menu;
             lastPressTime = loopTime;
+
         }
         
         if( !buttonDownOn && !buttonUpOn && ! buttonMenuOn ){
+
             previousButton = 0;
             buttonRepeated = false;
+
         }
 
     }
+
 }
 
 void renderScreenWithText( char text[], int currentValue, int maxValue ){
@@ -187,8 +199,10 @@ void renderScreenWithText( char text[], int currentValue, int maxValue ){
 
     //Print the first line
     for( int i = 0; i < 16; i++ ){
+
         lcd.setCursor( i, 0 );
         lcd.write(text[i]);
+
     }
         
     //Print the second line
@@ -269,13 +283,9 @@ void menuScreenLogic() {
 void contrastScreenLogic() {
 
     if( buttonUpOn && contrast < 255 ){
-
         contrast += 1;
-
     } else if( buttonDownOn && contrast > 0 ) {
-
         contrast -= 1;
-
     }
     
     if( buttonMenuOn ){
@@ -293,13 +303,9 @@ void contrastScreenLogic() {
 void timeScreenLogic() {
 
     if( buttonUpOn && time < 720 ){
-
         time += 1;
-
     } else if( buttonDownOn && time > 0 ) {
-
         time -= 1;
-
     }
     
     if( buttonMenuOn ){
@@ -317,13 +323,9 @@ void timeScreenLogic() {
 void angleScreenLogic() {
 
     if( buttonUpOn && angle < 720 ){
-
         angle += 1;
-
     } else if( buttonDownOn && angle > 0 ) {
-
         angle -= 1;
-
     }
     
     if( buttonMenuOn ){
