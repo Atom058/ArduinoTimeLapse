@@ -18,6 +18,7 @@
     const int motorPin4 = 13;
 
     // Pins that aren't connected to the library, but are still related to LCD
+    const int backlightPin = 10;
     const int contrastPin = 11;
 
     //Other Pins
@@ -46,7 +47,7 @@ LiquidCrystal lcd(rs, enable, d4, d5, d6, d7);
     int debounceTime = 200;
 
     //Values for settings
-    int contrast = 200; //TODO Calibrate initial value
+    int contrast = 40; //TODO Calibrate initial value
     int angle = 0;
     int time = 0;
 
@@ -91,11 +92,20 @@ void setup() {
 
     //Contrast pin
     analogWrite(contrastPin, contrast);
+    //LED Backlighting pin
+    analogWrite(backlightPin, 200);
+
+    Serial.begin(9600);
 
 }
 
 
 void loop() {
+
+    Serial.println(" ");
+    Serial.println( "New loop has begun" );
+    Serial.print( "Contrast is set to: "); Serial.println( contrast );
+    Serial.print( "InitialContrast set: " ); Serial.println( initialContrastSet );
     
     loopTime = millis();
     readButtons();
@@ -151,6 +161,7 @@ void readButtons() {
         if( digitalRead(buttonUp) == HIGH ){
 
             buttonUpOn = true;
+            Serial.println("Button UP pressed");
 
             if( previousButton == up ){
                 buttonRepeated = true;
@@ -162,6 +173,7 @@ void readButtons() {
         } else if( digitalRead(buttonDown) == HIGH ){
 
             buttonDownOn = true;
+            Serial.println("Button DOWN pressed");
 
             if( previousButton == down ){
                 buttonRepeated = true;
@@ -173,6 +185,7 @@ void readButtons() {
         } else if( digitalRead(buttonMenu) == HIGH ){
 
             buttonMenuOn = true;
+            Serial.println("Button MENU pressed");
 
             if( previousButton == menu ){
                 buttonRepeated = true;
@@ -196,6 +209,9 @@ void readButtons() {
 
 void renderScreenWithText( char text[], int currentValue, int maxValue ){
 
+    Serial.println("render screen with text");
+    Serial.print( "Text received: " );Serial.println(text);
+
     lcd.noCursor();
     lcd.clear();
 
@@ -203,13 +219,13 @@ void renderScreenWithText( char text[], int currentValue, int maxValue ){
     for( int i = 0; i < 16; i++ ){
 
         lcd.setCursor( i, 0 );
-        lcd.write(text[i]);
+        lcd.write( text[i] );
 
     }
         
     //Print the second line
     lcd.setCursor( 0, 1 );
-    lcd.print( currentValue + "/" + maxValue );
+    lcd.print( currentValue, DEC); lcd.print("/"); lcd.print(maxValue, DEC );
     
 }
 
@@ -283,6 +299,8 @@ void menuScreenLogic() {
 
 
 void contrastScreenLogic() {
+
+    Serial.println("contrast logic entered");
 
     if( buttonUpOn && contrast < 255 ){
         contrast += 1;
