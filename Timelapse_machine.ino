@@ -41,19 +41,6 @@
 LiquidCrystal lcd(rs, enable, d4, d5, d6, d7);
 
 //Variables
-
-
-void setup() {
-    //Motor
-    myStepper.setSpeed(motorSpeed);
-
-    //LCD
-    lcd.begin(16, 2);
-    lcd.noAutoscroll();
-
-}
-
-//Temporary placement of variables
     unsigned long loopTime = 0;
     unsigned long lastPressTime = 0;
     int debounceTime = 200;
@@ -92,6 +79,21 @@ void setup() {
     bool buttonUpOn = false;
     bool buttonDownOn = false;
     bool buttonMenuOn = false;
+
+
+void setup() {
+    //Motor
+    myStepper.setSpeed(motorSpeed);
+
+    //LCD
+    lcd.begin(16, 2);
+    lcd.noAutoscroll();
+
+    //Contrast pin
+    analogWrite(contrastPin, contrast);
+
+}
+
 
 void loop() {
     
@@ -287,6 +289,8 @@ void contrastScreenLogic() {
     } else if( buttonDownOn && contrast > 0 ) {
         contrast -= 1;
     }
+
+    analogWrite( contrastPin, contrast );
     
     if( buttonMenuOn ){
 
