@@ -27,15 +27,15 @@
     //Reset button - should be connected to a pnp to LCD/Motor and to Arduino
 
 //Motor
-    // The stepper motor is geared, so it has 64 internal translated to 64x32 steps out.
-    Stepper myStepper(stepsPerRevolution, motorPin1, motorPin2, motorPin3, motorPin4);
-
     // Settings for Motor
     const int stepsPerRevolution = 64;    // For the engine
     const int oneRevolution = stepsPerRevolution * 32; //Approximate with gearing
     const float stepResolution = (float) 360 / oneRevolution; //Good for finding out positioning
     const int oneDegree = oneRevolution / 360; //Not REALLY one degree, but anyway.
     const int motorSpeed = 10; //RPM of the motor, gives 10/64 RPM out (0,15RPM)
+
+    // The stepper motor is geared, so it has 64 internal translated to 64x32 steps out.
+    Stepper myStepper(stepsPerRevolution, motorPin1, motorPin2, motorPin3, motorPin4);
 
 //LCD
 LiquidCrystal lcd(rs, enable, d4, d5, d6, d7);
