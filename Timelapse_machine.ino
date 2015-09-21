@@ -113,9 +113,6 @@ void setup() {
 
 void loop() {
 
-    digitalWrite(enable, LOW);
-    delay(10);
-
     Serial.println(" ");
     Serial.println( "New loop has begun" );
     Serial.print( "Contrast is set to: "); Serial.println( contrast );
@@ -140,12 +137,16 @@ void loop() {
 
         //These weird if cases are nescessary because of switch/case implementation
         if( currentScreen == menuScreen ){
+            Serial.println("MENU Screen entered");
             menuScreenLogic();
         } else if( currentScreen == timeScreen ){
+            Serial.println("TIME Screen entered");
             timeScreenLogic();
         } else if( currentScreen == contrastScreen ){
+            Serial.println("CONTRAST Screen entered");
             contrastScreenLogic();
         } else if( currentScreen == angleScreen ){
+            Serial.println("ANGLE Screen entered");
             angleScreenLogic();
         } else {
             currentScreen = menuScreen;
@@ -317,8 +318,6 @@ void menuScreenLogic() {
 
 
 void contrastScreenLogic() {
-
-    Serial.println("contrast logic entered");
 
     if( buttonUpOn && contrast < 255 ){
         contrast += 1;
