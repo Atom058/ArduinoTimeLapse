@@ -118,7 +118,7 @@ void loop() {
     Serial.print( "  Contrast is set to: "); Serial.println( contrast );
     Serial.print( "  Angle is set to: "); Serial.println( angle );
     Serial.print( "  Time is set to: "); Serial.println( time );
-    Serial.print("  -----  ");
+    Serial.println("  -----  ");
     
     loopTime = millis();
     readButtons();
@@ -224,8 +224,8 @@ void readButtons() {
 
 void renderScreenWithText( char text[], int currentValue, int maxValue ){
 
-    Serial.println("    Render text logic");
-    Serial.print( "      Text received: " );Serial.println(text);
+    Serial.println("  Render text logic");
+    Serial.print( "    Text received: " );Serial.println(text);
 
     lcd.noCursor();
     lcd.clear();
@@ -283,9 +283,7 @@ void menuScreenLogic() {
         if( sizeof(menuItems[item]) < 6 ){
 
             //Integer MAGIC!
-            lcd.setCursor( ( 9 * item % 2 ), item/2 );
-            Serial.print("    Cursor set to x: "); Serial.print( ( 9 * item % 2 ) ); 
-            Serial.print(" and y: "); Serial.print( (item/2) );
+            lcd.setCursor( 9 * ( item % 2 ), item/2 );
             lcd.print(menuItems[item]);
 
         } else {
@@ -293,7 +291,7 @@ void menuScreenLogic() {
             for( int i = 0; i < 6; i++ ){
 
                 //Integer MAGIC!
-                lcd.setCursor( ( 9 * item % 2 ) + i, item/2 );                
+                lcd.setCursor( 9 * ( item % 2 ) + i, item/2 );
                 lcd.write(menuItems[item][i]);
 
             }
