@@ -87,6 +87,7 @@ LiquidCrystal lcd(rs, enable, d4, d5, d6, d7);
 
     int previousButton = 0;
     bool buttonRepeated = false;
+    int numberOfRepeats = 0;
 
     bool buttonUpOn = false;
     bool buttonDownOn = false;
@@ -211,11 +212,13 @@ void readButtons() {
 
             previousButton = 0;
             buttonRepeated = false;
+            numberOfRepeats = 0;
 
         }
 
         if( buttonRepeated ){
-            Serial.print("!!Button was repeated!, buttonRepeated: "); Serial.println( buttonRepeated );
+            numberOfRepeats += 1;
+            Serial.print("!!Button was repeated!, repeated times: "); Serial.println( numberOfRepeats );
         }
 
     }
@@ -317,14 +320,69 @@ void menuScreenLogic() {
 
 }
 
+holdOn = "10 sec";
+holdOnTime;
+void timeScreenLogic() {
+
+    int increment = 10;
+    if( numberOfRepeats > 6 ){
+        //Minutes
+        if( numberOfRepeats > 5){
+
+        } else {
+            increment = 10;
+            holdOn = "1 min";
+            holdOnTime = loopTime();
+        }
+
+    }
+
+    if( buttonUpOn ){
+        time += ;
+    } else if( buttonDownOn && time > 0 ) {
+        time -= calculatedAcceleration();
+    }
+    
+    if( buttonMenuOn && !buttonRepeated ){
+
+        currentScreen = menuScreen;
+        return;
+
+    }
+
+    renderScreenWithText( "Desired Time", time, 720 );
+
+}
+
+/*
+TODO - should be expanded to have a more generic structure for these 
+two very similar screens
+*/
+int calculatedAcceleration(){
+
+    int acceleration = 1;
+
+    //Will incraese speed by double every 5 repeats!
+    for( int i = 0; i < ( numberOfRepeats / 5) && acceleration < 130; i++ ){
+        acceleration *= 2;
+    }
+
+    return (int) acceleration;
+
+}
 
 void contrastScreenLogic() {
 
-    if( buttonUpOn && contrast < 255 ){
-        contrast += 1;
-    } else if( buttonDownOn && contrast > 0 ) {
-        contrast -= 1;
+    if( buttonUpOn){
+        contrast += calculatedAcceleration();
+    } else if( buttonDownOn ) {
+        contrast -= calculatedAcceleration();
     }
+
+    if( contrast > 255 )
+        contrast = 255;
+    if( contrast < 0 )
+        contrast = 0;
 
     analogWrite( contrastPin, contrast );
     
@@ -339,34 +397,18 @@ void contrastScreenLogic() {
     
 }
 
-
-void timeScreenLogic() {
-
-    if( buttonUpOn && time < 720 ){
-        time += 1;
-    } else if( buttonDownOn && time > 0 ) {
-        time -= 1;
-    }
-    
-    if( buttonMenuOn && !buttonRepeated ){
-
-        currentScreen = menuScreen;
-        return;
-
-    } 
-
-    renderScreenWithText("Desired Angle", time, 720);
-
-}
-
-
 void angleScreenLogic() {
 
-    if( buttonUpOn && angle < 720 ){
-        angle += 1;
-    } else if( buttonDownOn && angle > 0 ) {
-        angle -= 1;
+    if( buttonUpOn ){
+        angle += calculatedAcceleration();
+    } else if( buttonDownOn ) {
+        angle -= calculatedAcceleration();
     }
+
+    if( contrast > 720 )
+        contrast = 720;
+    if( contrast < 0 )
+        contrast = 0;
     
     if( buttonMenuOn && !buttonRepeated ){
 
@@ -375,6 +417,6 @@ void angleScreenLogic() {
 
     } 
 
-    renderScreenWithText("Desired Angle", angle, 720);
+    renderScreenWithText( "Desired Angle", angle, 720 );
 
 }
