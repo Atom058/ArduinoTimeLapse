@@ -115,16 +115,15 @@ void loop() {
 
     Serial.println(" ");
     Serial.println( "New loop has begun" );
-    Serial.print( "Contrast is set to: "); Serial.println( contrast );
-    Serial.print( "Angle is set to: "); Serial.println( angle );
-    Serial.print( "Time is set to: "); Serial.println( time );
+    Serial.print( "  Contrast is set to: "); Serial.println( contrast );
+    Serial.print( "  Angle is set to: "); Serial.println( angle );
+    Serial.print( "  Time is set to: "); Serial.println( time );
+    Serial.print("  -----  ");
     
     loopTime = millis();
     readButtons();
 
     if( !initialContrastSet ){
-
-        Serial.print( "InitialContrast set: " ); Serial.println( initialContrastSet );
 
         if( buttonMenuOn ) {
             //If the "ok" button is pressed, the contrast is OK
@@ -133,20 +132,22 @@ void loop() {
             contrastScreenLogic();
         }
 
+        Serial.print( "  InitialContrast set: " ); Serial.println( initialContrastSet );
+
     } else if( !timelapseRunning ) {
 
         //These weird if cases are nescessary because of switch/case implementation
         if( currentScreen == menuScreen ){
-            Serial.println("MENU Screen entered");
+            Serial.println("  MENU Screen entered");
             menuScreenLogic();
         } else if( currentScreen == timeScreen ){
-            Serial.println("TIME Screen entered");
+            Serial.println("  TIME Screen entered");
             timeScreenLogic();
         } else if( currentScreen == contrastScreen ){
-            Serial.println("CONTRAST Screen entered");
+            Serial.println("  CONTRAST Screen entered");
             contrastScreenLogic();
         } else if( currentScreen == angleScreen ){
-            Serial.println("ANGLE Screen entered");
+            Serial.println("  ANGLE Screen entered");
             angleScreenLogic();
         } else {
             currentScreen = menuScreen;
@@ -156,7 +157,7 @@ void loop() {
         lcd.clear();
         lcd.setCursor( 0, 0 );
         lcd.noCursor();
-        lcd.print("Engine on");
+        lcd.print("  Engine on");
     }
     
 }
@@ -169,17 +170,17 @@ void loop() {
 */
 void readButtons() {
 
+    buttonUpOn = false;
+    buttonDownOn = false;
+    buttonMenuOn = false;
+
     if( lastPressTime + debounceTime < loopTime ) {
         //There must be some time between presses to avoid button bounce
-
-        buttonUpOn = false;
-        buttonDownOn = false;
-        buttonMenuOn = false;
 
         if( digitalRead(buttonUp) == HIGH ){
 
             buttonUpOn = true;
-            Serial.println("Button UP pressed");
+            Serial.println("!!Button UP pressed");
 
             buttonRepeated = ( previousButton == up );
 
@@ -189,7 +190,7 @@ void readButtons() {
         } else if( digitalRead(buttonDown) == HIGH ){
 
             buttonDownOn = true;
-            Serial.println("Button DOWN pressed");
+            Serial.println("!!Button DOWN pressed");
 
             buttonRepeated = ( previousButton == down );
 
@@ -199,7 +200,7 @@ void readButtons() {
         } else if( digitalRead(buttonMenu) == HIGH ){
 
             buttonMenuOn = true;
-            Serial.println("Button MENU pressed");
+            Serial.println("!!Button MENU pressed");
 
             buttonRepeated = ( previousButton == menu );
 
@@ -214,7 +215,7 @@ void readButtons() {
         }
 
         if( buttonRepeated ){
-            Serial.print("Button was repeated!, buttonRepeated: "); Serial.println( buttonRepeated );
+            Serial.print("!!Button was repeated!, buttonRepeated: "); Serial.println( buttonRepeated );
         }
 
     }
@@ -223,8 +224,8 @@ void readButtons() {
 
 void renderScreenWithText( char text[], int currentValue, int maxValue ){
 
-    Serial.println("Render text logic");
-    Serial.print( "  Text received: " );Serial.println(text);
+    Serial.println("    Render text logic");
+    Serial.print( "      Text received: " );Serial.println(text);
 
     lcd.noCursor();
     lcd.clear();
