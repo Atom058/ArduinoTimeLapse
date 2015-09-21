@@ -59,15 +59,26 @@ LiquidCrystal lcd(rs, enable, d4, d5, d6, d7);
 //State recording
 
     //Screens
-    const int menuScreen = 1; //ONLY for currentScreen
-    const int angleScreen = 2; 
-    const int timeScreen = 3;
-    const int contrastScreen = 4;
-    const int startItem = 5; //ONLY for currentSelection
-    const int timelapseScreen = 6; //Not included as of yet
+    const int angleScreen = 0; 
+    const int timeScreen = 1;
+    const int contrastScreen = 2;
+    const int startItem = 3; //ONLY for currentSelection
+    const int firstItem = angleScreen;
+    const int lastItem = startItem;
 
-    int currentScreen = 1; //initiate on menu screen
-    int currentSelection = 0;
+    const int menuScreen = 100; //ONLY for currentScreen
+    const int timelapseScreen = 200; //Not included as of yet
+
+    char* menuItems[] = {
+        "Angle",
+        "Time",
+        "Screen",
+        "Start"
+    }
+
+    //Keeps track of which screen we are on
+    int currentScreen = menuScreen; //initiate on menu screen
+    int currentSelection = firstItem; //Initiate on First item
 
     //Buttons
     const int up = 1;
@@ -166,9 +177,7 @@ void readButtons() {
             buttonUpOn = true;
             Serial.println("Button UP pressed");
 
-            if( previousButton == up ){
-                buttonRepeated = true;
-            }
+            buttonRepeated = ( previousButton == up );
 
             previousButton = up;
             lastPressTime = loopTime;
@@ -178,9 +187,7 @@ void readButtons() {
             buttonDownOn = true;
             Serial.println("Button DOWN pressed");
 
-            if( previousButton == down ){
-                buttonRepeated = true;
-            }
+            buttonRepeated = ( previousButton == down );
 
             previousButton = down;
             lastPressTime = loopTime;
@@ -190,16 +197,12 @@ void readButtons() {
             buttonMenuOn = true;
             Serial.println("Button MENU pressed");
 
-            if( previousButton == menu ){
-                buttonRepeated = true;
-            }
+            buttonRepeated = ( previousButton == menu );
 
             previousButton = menu;
             lastPressTime = loopTime;
 
-        }
-        
-        if( !buttonDownOn && !buttonUpOn && ! buttonMenuOn ){
+        } else {
 
             previousButton = 0;
             buttonRepeated = false;
@@ -237,47 +240,55 @@ void menuScreenLogic() {
     lcd.cursor();
     lcd.clear();
 
-    if( buttonUpOn ){
+    if( !buttonRepeated ){
 
-        if( ++currentSelection > startItem ){
-            currentSelection == angleScreen;
+        if( buttonUpOn ){
+
+            if( ++currentSelection > sizeof(menuItems) ){
+                currentSelection == firstItem;
+            }
+
+        } else if( buttonDownOn ){
+
+            if( --currentSelection < 0 ){
+                currentSelection == lastItem;
+            }
+
+        } else if( buttonMenuOn ){
+            
+            //If the button is pressed, we can go back to the loop
+            if( currentScreen == startItem ){
+                //Starts the timelapse
+                timelapseRunning = true;
+            } else {
+                //Switches screens
+                currentScreen = currentSelection;
+            }
+
+            return;
+
         }
-
-    } else if( buttonDownOn ){
-
-        if( --currentSelection < angleScreen ){
-            currentSelection == startItem;
-        }
-
-    } else if( buttonMenuOn ){
-        
-        //If the button is pressed, we can go back to the loop
-        if( currentScreen == startItem ){
-            //Starts the timelapse
-            timelapseRunning = true;
-        } else {
-            //Switches screens
-            currentScreen = currentSelection;            
-        }
-
-        return;
 
     }
 
-    char* menuItems[] = {
-        "Angle",
-        "Time",
-        "Screen",
-        "Start"
-    };
-    
     //Print menu choices
     for( int item; item < 4; item++ ) {
 
-        for( int i = 0; i < 6; i++ ){
+        if( sizeof(menuItems[item] < 6) ){
 
-            lcd.setCursor( ( 9 * item % 2 ) + i, item/2 );
-            lcd.write(menuItems[item][i]);
+            //Integer MAGIC!
+            lcd.setCursor( ( 9 * item % 2 ), item/2 );
+            lcd.write(menuItems[item]);
+
+        } else {
+
+            for( int i = 0; i < 6; i++ ){
+
+                //Integer MAGIC!
+                lcd.setCursor( ( 9 * item % 2 ) + i, item/2 );                
+                lcd.write(menuItems[item][i]);
+
+            }
 
         }
 
@@ -293,8 +304,8 @@ void menuScreenLogic() {
     } else if( currentSelection == startItem ){
         lcd.setCursor( 9, 1 );
     } else {
-        //Default case
-        currentSelection = angleScreen;
+        //Default case, something has gone terribly wrong!
+        currentSelection = firstItem;
         lcd.setCursor( 0, 0 );
     }
 
