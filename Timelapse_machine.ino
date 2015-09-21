@@ -74,7 +74,7 @@ LiquidCrystal lcd(rs, enable, d4, d5, d6, d7);
         "Time",
         "Screen",
         "Start"
-    }
+    };
 
     //Keeps track of which screen we are on
     int currentScreen = menuScreen; //initiate on menu screen
@@ -112,6 +112,9 @@ void setup() {
 
 
 void loop() {
+
+    digitalWrite(enable, LOW);
+    delay(10);
 
     Serial.println(" ");
     Serial.println( "New loop has begun" );
@@ -222,7 +225,7 @@ void renderScreenWithText( char text[], int currentValue, int maxValue ){
     lcd.clear();
 
     //Print the first line
-    for( int i = 0; i < 16; i++ ){
+    for( int i = 0; i < 16 && i < sizeof(text) ; i++ ){
 
         lcd.setCursor( i, 0 );
         lcd.write( text[i] );
@@ -274,11 +277,11 @@ void menuScreenLogic() {
     //Print menu choices
     for( int item; item < 4; item++ ) {
 
-        if( sizeof(menuItems[item] < 6) ){
+        if( sizeof(menuItems[item]) < 6 ){
 
             //Integer MAGIC!
             lcd.setCursor( ( 9 * item % 2 ), item/2 );
-            lcd.write(menuItems[item]);
+            lcd.print(menuItems[item]);
 
         } else {
 
