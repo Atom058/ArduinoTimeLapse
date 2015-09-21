@@ -1,0 +1,70 @@
+New loop has begun
+Contrast is set to: 40
+Angle is set to: 0
+Time is set to: 0
+InitialContrast set: 0
+Render text logic
+  Text received: Screen contrast
+ 
+New loop has begun
+Contrast is set to: 40
+Angle is set to: 0
+Time is set to: 0
+Button MENU pressed
+InitialContrast set: 0
+ 
+New loop has begun
+Contrast is set to: 40
+Angle is set to: 0
+Time is set to: 0
+MENU Screen entered
+ 
+New loop has begun
+Contrast is set to: 40
+Angle is set to: 0
+Time is set to: 0
+Button MENU pressed
+Button was repeated!, buttonRepeated: 1
+ANGLE Screen entered
+Render text logic
+  Text received: Desired Angle
+ 
+New loop has begun
+Contrast is set to: 40
+Angle is set to: 0
+Time is set to: 0
+ANGLE Screen entered
+Render text logic
+  Text received: Desired Angle
+ 
+New loop has begun
+Contrast is set to: 40
+Angle is set to: 0
+Time is set to: 0
+ANGLE Screen entered
+Render text logic
+  Text received: Desired Angle
+ 
+New loop has begun
+Contrast is set to: 40
+Angle is set to: 0
+Time is set to: 0
+ANGLE Screen entered
+Render text logic
+  Text received: Desired Angle
+ 
+New loop has begun
+Contrast is set to: 40
+Angle is set to: 0
+Time is set to: 0
+ANGLE Screen entered
+Render text logic
+  Text received: Desired Angle
+ 
+New loop has begun
+Contrast is set to: 40
+Angle is set to: 0
+Time is set to: 0
+ANGLE Screen entered
+Render text logic
+  Text received: Desired Angle
