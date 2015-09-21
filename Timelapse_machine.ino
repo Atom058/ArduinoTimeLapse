@@ -213,7 +213,7 @@ void readButtons() {
         }
 
         if( buttonRepeated ){
-            Serial.println("Button was repeated");
+            Serial.print("Button was repeated!, buttonRepeated: "); Serial.println( buttonRepeated );
         }
 
     }
