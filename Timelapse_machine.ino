@@ -284,6 +284,8 @@ void menuScreenLogic() {
 
             //Integer MAGIC!
             lcd.setCursor( ( 9 * item % 2 ), item/2 );
+            Serial.print("    Cursor set to x: "); Serial.print( ( 9 * item % 2 ) ); 
+            Serial.print(" and y: "); Serial.print( (item/2) );
             lcd.print(menuItems[item]);
 
         } else {
