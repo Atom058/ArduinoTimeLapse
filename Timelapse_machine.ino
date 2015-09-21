@@ -105,12 +105,15 @@ void loop() {
     Serial.println(" ");
     Serial.println( "New loop has begun" );
     Serial.print( "Contrast is set to: "); Serial.println( contrast );
-    Serial.print( "InitialContrast set: " ); Serial.println( initialContrastSet );
+    Serial.print( "Angle is set to: "); Serial.println( angle );
+    Serial.print( "Time is set to: "); Serial.println( time );
     
     loopTime = millis();
     readButtons();
 
     if( !initialContrastSet ){
+
+        Serial.print( "InitialContrast set: " ); Serial.println( initialContrastSet );
 
         if( buttonMenuOn ) {
             //If the "ok" button is pressed, the contrast is OK
