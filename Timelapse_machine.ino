@@ -225,12 +225,9 @@ void renderScreenWithText( char text[], int currentValue, int maxValue ){
     lcd.clear();
 
     //Print the first line
-    for( int i = 0; i < 16 && i < sizeof(text) ; i++ ){
+    lcd.setCursor( 0, 0 );
+    lcd.print( text );
 
-        lcd.setCursor( i, 0 );
-        lcd.write( text[i] );
-
-    }
         
     //Print the second line
     lcd.setCursor( 0, 1 );
