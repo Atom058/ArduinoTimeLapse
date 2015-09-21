@@ -212,14 +212,18 @@ void readButtons() {
 
         }
 
+        if( buttonRepeated ){
+            Serial.println("Button was repeated");
+        }
+
     }
 
 }
 
 void renderScreenWithText( char text[], int currentValue, int maxValue ){
 
-    Serial.println("render screen with text");
-    Serial.print( "Text received: " );Serial.println(text);
+    Serial.println("Render text logic");
+    Serial.print( "  Text received: " );Serial.println(text);
 
     lcd.noCursor();
     lcd.clear();
@@ -324,7 +328,7 @@ void contrastScreenLogic() {
 
     analogWrite( contrastPin, contrast );
     
-    if( buttonMenuOn ){
+    if( buttonMenuOn && !buttonRepeated ){
 
         currentScreen = menuScreen;
         return;
@@ -344,7 +348,7 @@ void timeScreenLogic() {
         time -= 1;
     }
     
-    if( buttonMenuOn ){
+    if( buttonMenuOn && !buttonRepeated ){
 
         currentScreen = menuScreen;
         return;
@@ -364,7 +368,7 @@ void angleScreenLogic() {
         angle -= 1;
     }
     
-    if( buttonMenuOn ){
+    if( buttonMenuOn && !buttonRepeated ){
 
         currentScreen = menuScreen;
         return;
