@@ -397,7 +397,7 @@ void printCurrentTime(){
         //  Allows subsequent units to only get "their" part of the time
         if( currentTimeValues[i] > 0 ){
             subdividedTime %= currentTimeValues[i];
-            Serial.print("    SubdividedTime is: "); Serial.println(subdividedTime);
+            Serial.print("    SubdividedTime is: "); Serial.print(timeUnits[i]); Serial.println(subdividedTime);
         }
 
         lcd.print(currentTimeValues[i]);
