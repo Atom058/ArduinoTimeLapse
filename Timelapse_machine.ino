@@ -321,11 +321,11 @@ void menuScreenLogic() {
 }
 
 int currentTimeUnit = 0;
-char* timeUnits[] = {
-    "d",
-    "h",
-    "m",
-    "s"
+char timeUnits[] = {
+    'd',
+    'h',
+    'm',
+    's'
 };
 unsigned long timeConversions[] = {
     86400000,
@@ -387,7 +387,7 @@ void printCurrentTime(){
     unsigned long subdividedTime = time;
     for( int i = 0; i < 4; i++ ){
 
-        lcd.setCursor( ( 1 + 4 * i ), 1 ); 
+        lcd.setCursor( ( 1 + 4 * i ), 1 );
         //Write character
         lcd.write(timeUnits[i]);
         
@@ -396,7 +396,7 @@ void printCurrentTime(){
         //Remove the current value from the calucation variable
         //  Allows subsequent units to only get "their" part of the time
         if( currentTimeValues[i] > 0 ){
-            subdividedTime = subdividedTime % currentTimeValues[i];
+            subdividedTime %= ( currentTimeValues[i] * timeConversions[i] );
             Serial.print("    subdividedTime is: "); Serial.print(timeUnits[i]); Serial.println(subdividedTime);
         }
 
