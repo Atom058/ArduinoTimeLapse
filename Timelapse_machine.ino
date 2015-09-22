@@ -49,7 +49,7 @@ LiquidCrystal lcd(rs, enable, d4, d5, d6, d7);
     //Values for settings
     int contrast = 40; //TODO Calibrate initial value
     int angle = 0;
-    int time = 0;
+    unsinged long time = 0;
 
     float currentMotorPosition = 0;
 
@@ -320,8 +320,8 @@ void menuScreenLogic() {
 
 }
 
-holdOn = "10 sec";
-holdOnTime;
+holdOnIncrement = "10 sec";
+holdOnTime = 0;
 void timeScreenLogic() {
 
     int increment = 10;
