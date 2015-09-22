@@ -360,7 +360,7 @@ void timeScreenLogic() {
 
         currentTimeUnit += 1;
 
-        if( sizeof(timeUnits)/sizeof(timeUnits[0]) < currentTimeUnit - 1 ){
+        if( sizeof(timeUnits)/sizeof(timeUnits[0]) < currentTimeUnit + 1 ){
 
             currentTimeUnit = 0;
             currentScreen = menuScreen;
