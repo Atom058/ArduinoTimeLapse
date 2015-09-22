@@ -328,7 +328,7 @@ char* timeUnits[] = {
     "s"
 };
 unsigned long timeConversions[] = {
-    864000000,
+    86400000,
     3600000,
     60000,
     1000
@@ -346,7 +346,7 @@ void timeScreenLogic() {
         time += calculatedAcceleration() * timeConversions[currentTimeUnit];
     } else if( buttonDownOn ) {
 
-        long reduction = calculatedAcceleration() * timeConversions[currentTimeUnit];
+        unsigned long reduction = calculatedAcceleration() * timeConversions[currentTimeUnit];
 
         if( time - reduction < 0 ){
             time = 0;
