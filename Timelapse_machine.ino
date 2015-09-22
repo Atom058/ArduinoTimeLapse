@@ -396,8 +396,8 @@ void printCurrentTime(){
         //Remove the current value from the calucation variable
         //  Allows subsequent units to only get "their" part of the time
         if( currentTimeValues[i] > 0 ){
-            subdividedTime %= currentTimeValues[i];
-            Serial.print("    SubdividedTime is: "); Serial.print(timeUnits[i]); Serial.println(subdividedTime);
+            subdividedTime = subdividedTime % currentTimeValues[i];
+            Serial.print("    subdividedTime is: "); Serial.print(timeUnits[i]); Serial.println(subdividedTime);
         }
 
         lcd.print(currentTimeValues[i]);
