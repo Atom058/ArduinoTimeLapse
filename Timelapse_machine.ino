@@ -49,7 +49,7 @@ LiquidCrystal lcd(rs, enable, d4, d5, d6, d7);
     //Values for settings
     int contrast = 40; //TODO Calibrate initial value
     int angle = 0;
-    unsinged long time = 0;
+    unsigned long time = 0;
 
     float currentMotorPosition = 0;
 
@@ -320,37 +320,88 @@ void menuScreenLogic() {
 
 }
 
-holdOnIncrement = "10 sec";
-holdOnTime = 0;
+int currentTimeUnit = 0;
+char* timeUnits[] = {
+    "d",
+    "h",
+    "m",
+    "s"
+};
+unsigned long timeConversions[] = {
+    864000000,
+    3600000,
+    60000,
+    1000
+};
+int currentTimeValues[] = {
+    0,
+    0,
+    0,
+    0
+};
+
 void timeScreenLogic() {
 
-    int increment = 10;
-    if( numberOfRepeats > 6 ){
-        //Minutes
-        if( numberOfRepeats > 5){
+    if( buttonUpOn ){
+        time += calculatedAcceleration() * timeConversions[currentTimeUnit];
+    } else if( buttonDownOn ) {
 
-        } else {
-            increment = 10;
-            holdOn = "1 min";
-            holdOnTime = loopTime();
+        long reduction = calculatedAcceleration() * timeConversions[currentTimeUnit];
+
+        if( time - reduction < 0 ){
+            time = 0;
+        } else{
+            time -= calculatedAcceleration() * timeConversions[currentTimeUnit];
         }
 
     }
-
-    if( buttonUpOn ){
-        time += ;
-    } else if( buttonDownOn && time > 0 ) {
-        time -= calculatedAcceleration();
-    }
-    
+ 
     if( buttonMenuOn && !buttonRepeated ){
 
-        currentScreen = menuScreen;
-        return;
+        currentTimeUnit += 1;
+
+        if( sizeof(timeUnits)/sizeof(timeUnits[0]) < currentTimeUnit - 1 ){
+
+            currentTimeUnit = 0;
+            currentScreen = menuScreen;
+            return; //Avoid printing to screen
+
+        } 
 
     }
 
-    renderScreenWithText( "Desired Time", time, 720 );
+    printCurrentTime();
+    lcd.setCursor( ( 1 + currentTimeUnit * 4 ), 1 );
+
+}
+
+void printCurrentTime(){
+
+    lcd.clear();
+    lcd.setCursor( 0, 0 );
+
+    //First line:
+    lcd.print("Set Time");
+
+    //Second line: " Dxx Hxx Mxx Sxx"
+    unsigned long subdividedTime = time;
+    for( int i = 0; i < 4; i++ ){
+
+        lcd.setCursor( ( 1 + 4 * i ), 1 ); 
+        //Write character
+        lcd.write(timeUnits[i]);
+        
+        //Save the current value for time unit
+        currentTimeValues[i] = ( subdividedTime / timeConversions[i] );
+        //Remove the current value from the calucation variable
+        //  Allows subsequent units to only get "their" part of the time
+        if( currentTimeValues[i] > 0 ){
+            subdividedTime %= currentTimeValues[i];
+        }
+
+        lcd.print(currentTimeValues[i]);
+
+    }
 
 }
 
@@ -417,6 +468,6 @@ void angleScreenLogic() {
 
     } 
 
-    renderScreenWithText( "Desired Angle", angle, 720 );
+    renderScreenWithText( "Set Angle range", angle, 720 );
 
 }
