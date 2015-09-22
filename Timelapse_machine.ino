@@ -59,19 +59,19 @@ LiquidCrystal lcd(rs, enable, d4, d5, d6, d7);
 //State recording
 
     //Screens
-    const int angleScreen = 0; 
-    const int timeScreen = 1;
+    const int timeScreen = 0;
+    const int angleScreen = 1; 
     const int contrastScreen = 2;
     const int startItem = 3; //ONLY for currentSelection
-    const int firstItem = angleScreen;
+    const int firstItem = timeScreen;
     const int lastItem = startItem;
 
     const int menuScreen = 100; //ONLY for currentScreen
     const int timelapseScreen = 200; //Not included as of yet
 
     char* menuItems[] = {
-        "Angle",
         "Time",
+        "Angle",
         "Screen",
         "Start"
     };
@@ -225,24 +225,6 @@ void readButtons() {
 
 }
 
-void renderScreenWithText( char text[], int currentValue, int maxValue ){
-
-    Serial.println("  Render text logic");
-    Serial.print( "    Text received: " );Serial.println(text);
-
-    lcd.noCursor();
-    lcd.clear();
-
-    //Print the first line
-    lcd.setCursor( 0, 0 );
-    lcd.print( text );
-
-        
-    //Print the second line
-    lcd.setCursor( 0, 1 );
-    lcd.print( currentValue, DEC); lcd.print("/"); lcd.print(maxValue, DEC );
-    
-}
 
 void menuScreenLogic() {
 
@@ -253,14 +235,14 @@ void menuScreenLogic() {
 
         if( buttonUpOn ){
 
-            if( ++currentSelection > sizeof(menuItems) ){
-                currentSelection == firstItem;
+            if( ++currentSelection >= ( sizeof(menuItems) / sizeof(menuItems[0]) ) ){
+                currentSelection = firstItem;
             }
 
         } else if( buttonDownOn ){
 
             if( --currentSelection < 0 ){
-                currentSelection == lastItem;
+                currentSelection = lastItem;
             }
 
         } else if( buttonMenuOn ){
@@ -283,7 +265,7 @@ void menuScreenLogic() {
     //Print menu choices
     for( int item; item < 4; item++ ) {
 
-        if( sizeof(menuItems[item]) < 6 ){
+        if( ( sizeof(menuItems[item]) / sizeof (menuItems[item][0]) ) < 6 ){
 
             //Integer MAGIC!
             lcd.setCursor( 9 * ( item % 2 ), item/2 );
@@ -304,19 +286,7 @@ void menuScreenLogic() {
     }
 
     //Set updated cursor position
-    if( currentSelection == angleScreen ){
-        lcd.setCursor( 0, 0 );
-    } else if( currentSelection == timeScreen ){
-        lcd.setCursor( 9, 0 );
-    } else if( currentSelection == contrastScreen ){
-        lcd.setCursor( 0, 1 );
-    } else if( currentSelection == startItem ){
-        lcd.setCursor( 9, 1 );
-    } else {
-        //Default case, something has gone terribly wrong!
-        currentSelection = firstItem;
-        lcd.setCursor( 0, 0 );
-    }
+    lcd.setCursor( 9 * ( currentSelection % 2 ), currentSelection / 2 );
 
 }
 
@@ -423,6 +393,25 @@ int calculatedAcceleration(){
 
 }
 
+void renderScreenWithText( char text[], int currentValue, int maxValue ){
+
+    Serial.println("  Render text logic");
+    Serial.print( "    Text received: " );Serial.println(text);
+
+    lcd.noCursor();
+    lcd.clear();
+
+    //Print the first line
+    lcd.setCursor( 0, 0 );
+    lcd.print( text );
+
+        
+    //Print the second line
+    lcd.setCursor( 0, 1 );
+    lcd.print( currentValue, DEC); lcd.print("/"); lcd.print(maxValue, DEC );
+    
+}
+
 void contrastScreenLogic() {
 
     if( buttonUpOn){
@@ -445,7 +434,7 @@ void contrastScreenLogic() {
 
     } 
 
-    renderScreenWithText("Screen contrast", contrast, 255);
+    renderScreenWithText("Screen contrast", ( 255 - contrast ), 255);
     
 }
 
@@ -457,10 +446,12 @@ void angleScreenLogic() {
         angle -= calculatedAcceleration();
     }
 
-    if( contrast > 720 )
-        contrast = 720;
-    if( contrast < 0 )
-        contrast = 0;
+    if( angle > 720 ) {
+        angle = 720;
+    }
+    if( angle < 0 ) {
+        angle = 0;
+    }
     
     if( buttonMenuOn && !buttonRepeated ){
 
